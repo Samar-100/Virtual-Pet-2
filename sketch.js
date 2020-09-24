@@ -1,56 +1,79 @@
+var dog, happyDog, database, foodStock, foodS, feedDog, addFood, dogImg;
+var fedTime, lastFed;
+var gameState = "Naming";
+var input;
 //Create variables here
-var dog, happydDog, database, foodStock, foodS;
 
 function preload() {
-  //load images here
   dogimg = loadImage("images/dogImg.png");
-  dogimg2 = loadImage("images/dogImg1.png");
+  happyDog = loadImage("images/dogImg1.png");
+  //load images here
 }
 
 function setup() {
-  var canvas = createCanvas(500, 500);
+  createCanvas(1000, 500);
   database = firebase.database();
-  foodStock = database.ref("Food");
-  foodStock.on("value", readStock);
-  dog = createSprite(250, 250, 10, 10);
+
+  foodobject = new Food();
+  dog = createSprite(800, 250, 10, 10);
   dog.addImage(dogimg);
   dog.scale = 0.2;
+
+  foodStock = database.ref("Food");
+  foodStock.on("value", readFood);
+
+  fedTime = database.ref("FeedTime");
+  fedTime.on("value", (data) => {
+    lastFed = data.val();
+  });
 }
-food;
 
 function draw() {
-  background(46, 139, 87);
-
-  //add styles here
-  if (keyWentDown(UP_ARROW)) {
-    writeStock(foodS);
-    dog.addImage(dogimg2);
-  }
-
+  background("green");
   drawSprites();
-  //add styles here
-  fill("blue");
-  textSize(20);
-  stroke(5);
-  text("Press Up Arrow Kew To Feed drago milk", 80, 100);
-  text("You have: " + foodS + " Milk left", 100, 70);
-  console.log(foodS);
-}
-
-//function to read and write food stock from database
-function readStock(data) {
-  foodS = data.val();
-}
-
-//function to write values in database
-function writeStock(x) {
-  if (x <= 0) {
-    x = 0;
-  } else {
-    x = x - 1;
+  if (gameState === "Naming") {
+    input = new Form();
+    input.display();
   }
 
+  if (gameState === "PLAY") {
+    foodobject.display();
+    feedDog = createButton("FEED DOG");
+    feedDog.position(500, 100);
+    feedDog.mousePressed(FeedDog);
+    addFood = createButton("ADD FOOD");
+    addFood.position(400, 100);
+    addFood.mousePressed(AddFood);
+
+    fill(255, 255, 254);
+    textSize(15);
+    if (lastFed >= 12) {
+      text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
+    } else if (lastFed === 0) {
+      text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
+    } else {
+      text("Last Fed : " + (lastFed % 12) + " AM", 350, 30);
+    }
+  }
+}
+
+function readFood(data) {
+  foodS = data.val();
+  foodobject.updateFoodStock(foodS);
+}
+
+function AddFood() {
+  foodS++;
   database.ref("/").update({
-    Food: x,
+    Food: foodS,
+  });
+}
+
+function FeedDog() {
+  dog.addImage(happyDog);
+  foodobject.updateFoodStock(foodobject.getFoodStock() - 1);
+  database.ref("/").update({
+    Food: foodobject.getFoodStock(),
+    FeedTime: hour(),
   });
 }
