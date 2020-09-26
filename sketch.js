@@ -1,7 +1,5 @@
 var dog, happyDog, database, foodStock, foodS, feedDog, addFood, dogImg;
 var fedTime, lastFed;
-var gameState = "Naming";
-var input;
 //Create variables here
 
 function preload() {
@@ -31,29 +29,23 @@ function setup() {
 function draw() {
   background("green");
   drawSprites();
-  if (gameState === "Naming") {
-    input = new Form();
-    input.display();
-  }
 
-  if (gameState === "PLAY") {
-    foodobject.display();
-    feedDog = createButton("FEED DOG");
-    feedDog.position(500, 100);
-    feedDog.mousePressed(FeedDog);
-    addFood = createButton("ADD FOOD");
-    addFood.position(400, 100);
-    addFood.mousePressed(AddFood);
+  foodobject.display();
+  feedDog = createButton("FEED DOG");
+  feedDog.position(500, 100);
+  feedDog.mousePressed(FeedDog);
+  addFood = createButton("ADD FOOD");
+  addFood.position(400, 100);
+  addFood.mousePressed(AddFood);
 
-    fill(255, 255, 254);
-    textSize(15);
-    if (lastFed >= 12) {
-      text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
-    } else if (lastFed === 0) {
-      text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
-    } else {
-      text("Last Fed : " + (lastFed % 12) + " AM", 350, 30);
-    }
+  fill(255, 255, 254);
+  textSize(15);
+  if (lastFed >= 12) {
+    text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
+  } else if (lastFed === 0) {
+    text("Last Fed : " + (lastFed % 12) + "PM", 350, 30);
+  } else {
+    text("Last Fed : " + (lastFed % 12) + " AM", 350, 30);
   }
 }
 
